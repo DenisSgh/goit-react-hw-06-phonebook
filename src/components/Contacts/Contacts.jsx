@@ -1,9 +1,11 @@
+import { connect } from 'react-redux';
+import { deleteContact } from 'redux/actions';
 import PropTypes from 'prop-types';
 
 import Section from 'components/Section';
 import s from './Contacts.module.css';
 
-const Contacts = ({ title, contacts, buttonDelete }) => {
+const Contacts = ({ title, contacts, deleteContact }) => {
   return (
     <Section title={title}>
       {contacts.length !== 0 ? (
@@ -20,7 +22,7 @@ const Contacts = ({ title, contacts, buttonDelete }) => {
                 <button
                   className={s.button}
                   type="button"
-                  onClick={() => buttonDelete(id)}
+                  onClick={() => deleteContact(id)}
                 >
                   Delete
                 </button>
@@ -38,7 +40,25 @@ const Contacts = ({ title, contacts, buttonDelete }) => {
 Contacts.propTypes = {
   title: PropTypes.string.isRequired,
   contacts: PropTypes.arrayOf(PropTypes.shape(PropTypes.string.isRequired)),
-  buttonDelete: PropTypes.func.isRequired,
+  deleteContact: PropTypes.func.isRequired,
 };
 
-export default Contacts;
+const getVisibleContacts = (items, filter) => {
+  window.localStorage.setItem('contacts', JSON.stringify(items));
+
+  const normalaizedFilter = filter.toLowerCase();
+  return items.filter(contact =>
+    contact.name.toLowerCase().includes(normalaizedFilter),
+  );
+};
+
+const mapStateToProps = ({ contacts: { items, filter } }) => ({
+  title: 'Contacts',
+  contacts: getVisibleContacts(items, filter),
+});
+
+const mapDispatchToProps = dispatch => ({
+  deleteContact: id => dispatch(deleteContact(id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Contacts);

@@ -1,11 +1,13 @@
 import { useState } from 'react';
+import { connect } from 'react-redux';
 import shortid from 'shortid';
 
+import { addContact } from 'redux/actions';
 import PropTypes from 'prop-types';
 import Section from 'components/Section';
 import s from './Form.module.css';
 
-export default function Form({ title, contacts, onSubmit }) {
+const Form = ({ title, contacts, addContact }) => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -31,7 +33,7 @@ export default function Form({ title, contacts, onSubmit }) {
       return alert(`${name} is already in the contact list`);
     }
 
-    onSubmit({ name, number });
+    addContact({ name, number });
     reset();
   };
 
@@ -78,10 +80,21 @@ export default function Form({ title, contacts, onSubmit }) {
       </form>
     </Section>
   );
-}
+};
 
 Form.propTypes = {
   title: PropTypes.string.isRequired,
   contacts: PropTypes.arrayOf(PropTypes.shape(PropTypes.string.isRequired)),
-  onSubmit: PropTypes.func.isRequired,
+  addContact: PropTypes.func.isRequired,
 };
+
+const mapStateToProps = state => ({
+  title: 'Phonebook',
+  contacts: state.contacts.items,
+});
+
+const mapDispatchToProps = dispatch => ({
+  addContact: contact => dispatch(addContact(contact)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Form);
