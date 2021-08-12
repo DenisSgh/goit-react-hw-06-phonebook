@@ -30,9 +30,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  changeFilter: e => {
-    dispatch(changeFilter(e.currentTarget.value));
-  },
+  changeFilter: e => dispatch(changeFilter(e.currentTarget.value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Filter);

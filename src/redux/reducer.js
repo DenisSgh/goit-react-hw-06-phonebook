@@ -1,87 +1,30 @@
+import { combineReducers } from 'redux';
 import { ADD, DELETE, CHANGE_FILTER } from './actionTypes';
 
-const initialState = {
-  contacts: {
-    items: JSON.parse(window.localStorage.getItem('contacts')) ?? [],
-    filter: '',
-  },
-};
-
-// const reducer = (state = initialState, { type, payload }) => {
-//   switch (type) {
-//     case ADD:
-// return {
-//   ...state,
-//   contacts: {
-//     ...state.contacts,
-//     items: [...state.contacts.items, payload],
-//   },
-// };
-
-// case DELETE:
-//   return {
-//     ...state,
-//     contacts: {
-//       ...state.contacts,
-//       filter: state.contacts.items.filter(
-//         contact => contact.id !== payload,
-//       ),
-//     },
-//   };
-
-// case CHANGE_FILTER:
-//   return {
-//     ...state,
-//     contacts: {
-//       ...state.contacts,
-//       filter: [...state.contacts.filter, payload],
-//     },
-//   };
-
-//     default:
-//       return state;
-//   }
-// };
-
-// export default reducer;
-
-// const initialState = {
-//   contacts: JSON.parse(window.localStorage.getItem('contacts')) ?? [],
-//   filter: '',
-// };
-
-const reducer = (state = initialState, { type, payload }) => {
+const items = (
+  state = JSON.parse(window.localStorage.getItem('contacts')) ?? [],
+  { type, payload },
+) => {
   switch (type) {
     case ADD:
-      return {
-        ...state,
-        contacts: {
-          ...state.contacts,
-          items: [...state.contacts.items, payload],
-        },
-      };
+      return [...state, payload];
 
     case DELETE:
-      return {
-        ...state,
-        contacts: {
-          ...state.contacts,
-          items: state.contacts.items.filter(contact => contact.id !== payload),
-        },
-      };
-
-    case CHANGE_FILTER:
-      return {
-        ...state,
-        contacts: {
-          ...state.contacts,
-          filter: payload,
-        },
-      };
+      return state.filter(contact => contact.id !== payload);
 
     default:
       return state;
   }
 };
 
-export default reducer;
+const filter = (state = '', { type, payload }) => {
+  switch (type) {
+    case CHANGE_FILTER:
+      return payload;
+
+    default:
+      return state;
+  }
+};
+
+export default combineReducers({ items, filter });
