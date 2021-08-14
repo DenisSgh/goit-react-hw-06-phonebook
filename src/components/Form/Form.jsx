@@ -1,15 +1,23 @@
 import { useState } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import shortid from 'shortid';
 
+import { getContacts } from 'redux/selectors';
 import { addContact } from 'redux/actions';
-import PropTypes from 'prop-types';
 import Section from 'components/Section';
+
+// import PropTypes from 'prop-types';
 import s from './Form.module.css';
 
-const Form = ({ title, contacts, addContact }) => {
+// const mapDispatchToProps = dispatch => ({
+//   addContact: contact => dispatch(addContact(contact)),
+// });
+
+const Form = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
 
   const handleCreateContact = e => {
     const { name, value } = e.currentTarget;
@@ -33,7 +41,7 @@ const Form = ({ title, contacts, addContact }) => {
       return alert(`${name} is already in the contact list`);
     }
 
-    addContact({ name, number });
+    dispatch(addContact({ name, number }));
     reset();
   };
 
@@ -46,7 +54,7 @@ const Form = ({ title, contacts, addContact }) => {
   const numberId = shortid.generate();
 
   return (
-    <Section title={title}>
+    <Section title="Phonebook">
       <form className={s.form} onSubmit={handleSubmit}>
         <label htmlFor={nameId}>
           Name
@@ -82,19 +90,9 @@ const Form = ({ title, contacts, addContact }) => {
   );
 };
 
-Form.propTypes = {
-  title: PropTypes.string.isRequired,
-  contacts: PropTypes.arrayOf(PropTypes.shape(PropTypes.string.isRequired)),
-  addContact: PropTypes.func.isRequired,
-};
+// Form.propTypes = {
+// contacts: PropTypes.arrayOf(PropTypes.shape(PropTypes.string.isRequired)),
+// addContact: PropTypes.func.isRequired,
+// };
 
-const mapStateToProps = state => ({
-  title: 'Phonebook',
-  contacts: state.contacts.items,
-});
-
-const mapDispatchToProps = dispatch => ({
-  addContact: contact => dispatch(addContact(contact)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Form);
+export default Form;
